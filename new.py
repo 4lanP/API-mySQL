@@ -30,7 +30,7 @@ def form():
     data = cursor.fetchall()
     cursor.execute("SHOW COLUMNS FROM sv")
     columns = [col[0] for col in cursor.fetchall()]
-    return render_template('index.html', data=data, columns=columns)
+    return render_template('form.html', data=data, columns=columns)
 
 
 #Thêm sinh viên
@@ -47,7 +47,6 @@ def add():
             ngaysinh = datetime.strptime(ngaysinh, "%d-%m-%Y").strftime("%Y-%m-%d")
         except ValueError:
             return "Ngày sinh không hợp lệ", 400
-
         sql = "INSERT INTO sv (MSV, `Tên`, `Ngày Sinh`, `Lớp`, `Điểm`) VALUES (%s, %s, %s, %s, %s)"
         values = (msv, ten, ngaysinh, lop, diem)
         cursor.execute(sql, values)
