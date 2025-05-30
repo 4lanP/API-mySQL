@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Thêm Sinh viên{% endblock %}
+
+{% block content %}
+    <h2>Thêm Sinh viên</h2>
+    <form id="form" method="POST" action="/add" novalidate>
+        <label for="msv">MSV:</label>
+        <input type="text" name="msv">
+
+        <label for="ten">Tên:</label>
+        <input type="text" name="ten">
+
+        <label for="ngaysinh">Ngày sinh (dd/mm/yyyy):</label>
+        <input type="text" name="ngaysinh" placeholder="VD: 16-09-2006">
+
+        <label for="lop">Lớp:</label>
+        <input type="text" name="lop">
+
+        <label for="diem">Điểm:</label>
+        <input type="number" step="0.01" name="diem">
+
+        <input type="submit" value="Thêm sinh viên">
+    </form>
+
+    <p id="output"></p>
+
+    <script>
+    const form = document.querySelector("#form");
+    const output = document.querySelector("#output");
+
+    form.addEventListener("submit", function (event) {
+        let text = "";
+
+        const name = form.ten.value.trim();
+        const hopLe = "aăâbcdđeêghiklmnoôơpqrstuưvxyáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ" +
+            "AĂÂBCDĐEÊGHIKLMNOÔƠPQRSTUƯVXYÁÀẢÃẠẮẰẲẴẶẤẦẨẪẬÉÈẺẼẸẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌỐỒỔỖỘỚỜỞỠỢÚÙỦŨỤỨỪỬỮỰÝỲỶỸỴ ";
+        if (name.length < 1) {
+            text += "Họ và tên không được để trống.<br>";
+        } else {
+            let loi = false;
+            for (let i = 0; i < name.length; i++) {
+                if (hopLe.indexOf(name[i]) === -1) {
+                    loi = true;
+                    break;
+                }
+            }
+            if (loi) {
+                text += "Họ và tên chỉ được chứa chữ cái tiếng Việt và khoảng trắng.<br>";
+            }
+        }
+
+        const date = form.ngaysinh.value.trim();
+        const parts = date.split('-');
+        if (parts.length !== 3) {
+            text += "Ngày sinh phải đúng định dạng dd/mm/yyyy.<br>";
+        } else {
+            const d = parseInt(parts[0], 10);
+            const m = parseInt(parts[1], 10);
+            const y = parseInt(parts[2], 10);
+            const Nhuan = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0));
+            const Ngay = [0, 31, (Nhuan ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (isNaN(d) || isNaN(m) || isNaN(y) || d < 1 || m < 1 || m > 12 || y > 2025 || d > Ngay[m]) {
+                text += "Ngày sinh không hợp lệ.<br>";
+            }
+        }
+
+        const msv = form.msv.value.trim();
+        if (msv === "") {
+            text += "MSV không được để trống.<br>";
+        } else if (!/^\d+$/.test(msv)) {
+            text += "MSV chỉ được chứa số.<br>";
+        }
+
+        const lop = form.lop.value.trim();
+        if (lop === "") {
+            text += "Lớp không được để trống.<br>";
+        }
+
+        const diem = form.diem.value.trim();
+        const diemSo = parseFloat(diem);
+        if (diem === "") {
+            text += "Điểm không được để trống.<br>";
+        } else if (isNaN(diemSo) || diemSo < 0 || diemSo > 10) {
+            text += "Điểm phải là số từ 0 đến 10.<br>";
+        }
+
+        if (text !== "") {
+            event.preventDefault();
+            output.innerHTML = text;
+            output.style.color = "red";
+        } else {
+            output.innerHTML = "Gửi thông tin thành công!";
+            output.style.color = "green";
+        }
+    });
+    </script>
+
+    <style>
+        form {
+            width: 300px;
+            margin: 50px auto;
+        }
+
+        input, label {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        #output {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+{% endblock %}
