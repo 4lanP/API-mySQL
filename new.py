@@ -11,7 +11,7 @@ app.config["SECRET_KEY"] = "phucdz"
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Alanphuc1609@",
+    password="",
     database="sinhvien"
 )
 cursor = conn.cursor()
